@@ -1,0 +1,41 @@
+{
+  "name": "Base Kubernetes Development Environment",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "hostRequirements": {
+    "cpus": 2,
+    "memory": "4gb",
+    "storage": "16gb"
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/git:1": {},
+    "ghcr.io/devcontainers/features/git-lfs:1": {}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-azuretools.vscode-containers",
+        "ms-vscode.vscode-json",
+        "ms-vscode.vscode-yaml",
+        "GitHub.copilot",
+        "GitHub.copilot-chat",
+        "GitHub.remotehub",
+        "redhat.vscode-yaml",
+        "eamodio.gitlens"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "editor.formatOnSave": true,
+        "files.associations": {
+          "*.yaml": "yaml",
+          "*.yml": "yaml"
+        }
+      }
+    }
+  },
+  "postCreateCommand": "bash .setup/setup.sh",
+  "remoteUser": "vscode""remoteEnv": {
+    "DEVCONTAINER": "true"
+  }
+}
