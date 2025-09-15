@@ -25,34 +25,52 @@ for arg in "$@"; do
   esac
 done
 
-# Move to the correct directory and clone
-# if the org and repo variables are set
-if [[ -n "$ORG" && -n "$REPO" ]]; then
-  sudo apt install -y git
-  folders=(".setup" "base" "$REPO" "$ORG")
-  for folder in "${folders[@]}"; do
-    if [ "$(basename "$PWD")" = "$folder" ]; then
-      cd ..
-    fi
-  done
-  mkdir -p "$ORG"
-  cd "$ORG"
-  if [ ! -d "$REPO" ]; then
-    git clone "https://github.com/$ORG/$REPO.git"
-  fi
-  cd "$REPO"
-  git pull
-  ./.setup/setup.sh
-  exit 0
+# Devcontainer check
+# if repo contains .devcontainer folder but not running in a devcontainer, exit
+if [ -d ".devcontainer" ] && [ -z "$VSCODE_REMOTE_CONTAINERS" ]; then
+  echo -e "${RED}Detected .devcontainer folder but not running in a devcontainer environment. Exiting setup script.${NC}"
+  exit 1
 fi
 
-# Ensure main branch is checked out
-echo
-echo -ne "${YELLOW}Specify the branch to checkout [main]: ${NC}"
-read BRANCH_NAME < /dev/tty
-echo
-BRANCH_NAME=${BRANCH_NAME:-main}
-git checkout "$BRANCH_NAME"
+# Do not execute this section if running in a devcontainer
+if [ -n "$VSCODE_REMOTE_CONTAINERS" ]; then
+
+  # Navigate to the correct directory and clone
+  if [[ -n "$ORG" && -n "$REPO" ]]; then
+    sudo apt install -y git
+    folders=(".setup" "base" "$REPO" "$ORG")
+    for folder in "${folders[@]}"; do
+      if [ "$(basename "$PWD")" = "$folder" ]; then
+        cd ..
+      fi
+    done
+    mkdir -p "$ORG"
+    cd "$ORG"
+    if [ ! -d "$REPO" ]; then
+      git clone "https://github.com/$ORG/$REPO.git"
+    fi
+    cd "$REPO"
+    git pull
+    ./.setup/setup.sh
+    exit 0
+  fi
+
+  # Prompt user for branch to checkout
+  echo
+  echo -ne "${YELLOW}Specify the branch to checkout [main]: ${NC}"
+  read BRANCH_NAME < /dev/tty
+  echo
+  BRANCH_NAME=${BRANCH_NAME:-main}
+  git checkout "$BRANCH_NAME"
+fi
+
+
+
+
+
+else
+  echo -e "${YELLOW}Running in devcontainer, skipping repo setup and branch checkout...${NC}"
+fi
 
 # Determine the directory of this setup.sh script
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

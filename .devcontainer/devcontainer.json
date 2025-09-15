@@ -35,8 +35,5 @@
     }
   },
   "postCreateCommand": "bash .setup/setup.sh",
-  "remoteUser": "vscode",
-  "remoteEnv": {
-    "DEVCONTAINER": "true"
-  }
+  "remoteUser": "vscode"
 }
