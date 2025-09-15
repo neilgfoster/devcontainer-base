@@ -1,5 +1,5 @@
 {
-  "name": "Base Kubernetes Development Environment",
+  "name": "Base Containerised Development Environment",
   "build": {
     "dockerfile": "Dockerfile"
   },
@@ -35,7 +35,8 @@
     }
   },
   "postCreateCommand": "bash .setup/setup.sh",
-  "remoteUser": "vscode""remoteEnv": {
+  "remoteUser": "vscode",
+  "remoteEnv": {
     "DEVCONTAINER": "true"
   }
 }
