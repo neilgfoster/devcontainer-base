@@ -25,15 +25,16 @@ for arg in "$@"; do
   esac
 done
 
+
 # Devcontainer check
 # if repo contains .devcontainer folder but not running in a devcontainer, exit
-if [ -d ".devcontainer" ] && [ -z "$VSCODE_REMOTE_CONTAINERS" ]; then
-  echo -e "${RED}Detected .devcontainer folder but not running in a devcontainer environment. Exiting setup script.${NC}"
-  exit 1
+if [ -d ".devcontainer" ] && [ "${DEVCONTAINER}" != "true" ]; then
+  echo -e "${RED}Detected .devcontainer folder but not running in a devcontainer environment. Exiting${NC}"
+  exit 0
 fi
 
 # Do not execute this section if running in a devcontainer
-if [ -n "$VSCODE_REMOTE_CONTAINERS" ]; then
+if [ "${DEVCONTAINER}" != "true" ]; then
 
   # Navigate to the correct directory and clone
   if [[ -n "$ORG" && -n "$REPO" ]]; then
@@ -62,14 +63,6 @@ if [ -n "$VSCODE_REMOTE_CONTAINERS" ]; then
   echo
   BRANCH_NAME=${BRANCH_NAME:-main}
   git checkout "$BRANCH_NAME"
-fi
-
-
-
-
-
-else
-  echo -e "${YELLOW}Running in devcontainer, skipping repo setup and branch checkout...${NC}"
 fi
 
 # Determine the directory of this setup.sh script
